@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Map;
 
-@FeignClient(name = "users", url = "localhost:8080/api/users")
+@FeignClient(name = "users", url = "http://localhost:8080/api/users")
 public interface UserClient {
 
     @PostMapping("/login")

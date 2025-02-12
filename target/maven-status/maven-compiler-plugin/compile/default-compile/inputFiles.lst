@@ -1,7 +1,8 @@
 C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\Config\DistanceServiceConfig.java
-C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\Config\FeignConfig.java
+C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\Config\FeignClientInterceptor.java
 C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\Config\GlobalExceptionHandler.java
 C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\Config\ResourceNotFoundException.java
+C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\Config\SecurityConfig.java
 C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\Controller\HospitalController.java
 C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\DTO\HospitalDTO.java
 C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\DTO\HospitalWithDistanceDTO.java
@@ -11,6 +12,7 @@ C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Proje
 C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\HospitalsApplication.java
 C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\Interface\DistanceService.java
 C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\Interface\UserClient.java
+C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\Provider\JwtTokenProvider.java
 C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\Repository\HospitalRepository.java
 C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\Repository\SpecialtyRepository.java
 C:\Users\Programmer\Documents\scolaire\Cours - Projet OC\Projet\Projet P11\Projet\Code\MedHeadPoc\Hospitals\src\main\java\com\example\hospitals\Repository\SubSpecialtyRepository.java

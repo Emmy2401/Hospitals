@@ -1,10 +1,10 @@
 com\example\hospitals\Controller\HospitalController.class
 com\example\hospitals\Repository\HospitalRepository.class
 com\example\hospitals\Repository\SpecialtyRepository.class
+com\example\hospitals\Provider\JwtTokenProvider.class
 com\example\hospitals\Interface\DistanceService.class
 com\example\hospitals\Repository\SubSpecialtyRepository.class
 com\example\hospitals\DTO\HospitalWithDistanceDTO.class
-com\example\hospitals\Config\FeignConfig.class
 com\example\hospitals\Config\GlobalExceptionHandler.class
 com\example\hospitals\DTO\HospitalDTO$SubSpecialtyDTO.class
 com\example\hospitals\Config\ResourceNotFoundException.class
@@ -12,6 +12,8 @@ com\example\hospitals\Service\LocalDistanceServiceTemporaire.class
 com\example\hospitals\Interface\UserClient.class
 com\example\hospitals\DTO\HospitalDTO$SpecialtyDTO.class
 com\example\hospitals\Service\HospitalService.class
+com\example\hospitals\Config\FeignClientInterceptor.class
+com\example\hospitals\Config\SecurityConfig.class
 com\example\hospitals\Service\UserService.class
 com\example\hospitals\Entity\Hospital.class
 com\example\hospitals\Config\DistanceServiceConfig.class

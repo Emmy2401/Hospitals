@@ -1,1 +1,2 @@
 # Hospitals
+Preuve de concept (PoC) pour MedHead, un consortium d'institutions médicales britanniques. Le projet repose sur une architecture de microservices (gestion des utilisateurs, hôpitaux, géolocalisation) avec un front-end VueJS. Utilisation de Spring Boot, JWT, CI/CD, tests automatisés et charge avec JMeter.

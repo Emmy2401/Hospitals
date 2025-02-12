@@ -1,22 +1,29 @@
 package com.example.hospitals.Service;
 import com.example.hospitals.Interface.UserClient;
+import com.example.hospitals.Provider.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
 import java.util.HashMap;
 import java.util.Map;
-
 @Service
 public class UserService {
-    private final UserClient userClient;
-    private String jwtToken; // Stocke le token JWT
 
-    public UserService(UserClient userClient) {
+    private final UserClient userClient;
+    private final JwtTokenProvider jwtTokenProvider; // Service pour stocker le token
+
+    public UserService(UserClient userClient, JwtTokenProvider jwtTokenProvider) {
         this.userClient = userClient;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     /**
-     * Authentifie l'hôpital auprès de Users et stocke le token JWT.
+     * Authentifie l'hôpital auprès du service Users et stocke le token JWT.
      *
      * @param username Nom d'utilisateur
      * @param password Mot de passe
@@ -31,13 +38,16 @@ public class UserService {
             ResponseEntity<Map<String, String>> response = userClient.getToken(credentials);
 
             if (response.getBody() != null && response.getBody().containsKey("token")) {
-                jwtToken = response.getBody().get("token");  // 🔥 Stocke le token JWT
+                String jwtToken = response.getBody().get("token");
+                jwtTokenProvider.setToken(jwtToken);  // 🔥 Stocke le token
                 return jwtToken;
+            } else {
+                System.err.println("Réponse invalide : le token est absent.");
             }
         } catch (Exception e) {
             System.err.println("Échec de l'authentification : " + e.getMessage());
         }
-        return null;  // 🔥 Retourne null si login échoue
+        return null;
     }
 
     /**
@@ -45,6 +55,6 @@ public class UserService {
      * @return Token JWT ou null si non authentifié
      */
     public String getToken() {
-        return jwtToken;
+        return jwtTokenProvider.getToken();
     }
 }

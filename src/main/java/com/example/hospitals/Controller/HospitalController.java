@@ -2,6 +2,7 @@ package com.example.hospitals.Controller;
 
 import com.example.hospitals.DTO.HospitalWithDistanceDTO;
 import com.example.hospitals.Entity.Hospital;
+import com.example.hospitals.Provider.JwtTokenProvider;
 import com.example.hospitals.Service.HospitalService;
 import com.example.hospitals.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,27 +19,24 @@ public class HospitalController {
     @Autowired
     private UserService userService;
 
+    /* Endpoint pour authentifier l'hôpital et récupérer le token JWT.
+     */
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
-        String token = userService.authenticate(credentials.get("username"), credentials.get("password"));
+        String username = credentials.get("username");
+        String password = credentials.get("password");
 
+        if (username == null || password == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Username and password are required"));
+        }
+
+        String token = userService.authenticate(username, password);
         if (token != null) {
             return ResponseEntity.ok(Map.of("token", token, "type", "Bearer"));
         }
-        return ResponseEntity.status(401).body(Map.of("error", "Authentication failed"));
+        return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
     }
 
-    /**
-     * Endpoint pour récupérer le token stocké.
-     */
-    @GetMapping("/token")
-    public ResponseEntity<Map<String, String>> getToken() {
-        String token = userService.getToken();
-        if (token != null) {
-            return ResponseEntity.ok(Map.of("token", token, "type", "Bearer"));
-        }
-        return ResponseEntity.status(401).body(Map.of("error", "No token available"));
-    }
 
 
     @PostMapping
