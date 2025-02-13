@@ -104,7 +104,7 @@ public class HospitalService {
         return hospitalRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Hospital with id " + id + " not found"));
 
     }
-    public double getDistance(double latitudeFrom, double longitudeFrom, double latitudeTo, double longitudeTo) {
+    public double getDistance(Double latitudeFrom, Double longitudeFrom, Double latitudeTo, Double longitudeTo) {
         DistanceRequestDTO request = new DistanceRequestDTO(latitudeFrom, longitudeFrom, latitudeTo, longitudeTo);
         return distanceClient.calculateDistance(request); //  Envoie le DTO au lieu d'une Map
     }

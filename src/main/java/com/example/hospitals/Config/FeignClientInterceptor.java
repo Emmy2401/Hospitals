@@ -2,6 +2,8 @@ package com.example.hospitals.Config;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+import org.springframework.cloud.openfeign.support.JsonFormWriter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import com.example.hospitals.Provider.JwtTokenProvider;
 
@@ -20,4 +22,5 @@ public class FeignClientInterceptor implements RequestInterceptor {
             requestTemplate.header("Authorization", "Bearer " + jwtToken);
         }
     }
+
 }

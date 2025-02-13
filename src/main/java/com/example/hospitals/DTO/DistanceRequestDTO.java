@@ -12,7 +12,11 @@ public class DistanceRequestDTO {
     @NotNull(message = "LongitudeTo est obligatoire")
     private Double longitudeTo;
 
-    public DistanceRequestDTO(double latitudeFrom, double longitudeFrom, double latitudeTo, double longitudeTo) {
+    public DistanceRequestDTO(Double latitudeFrom, Double longitudeFrom, Double latitudeTo, Double longitudeTo) {
+    this.latitudeFrom = latitudeFrom;
+    this.latitudeTo = latitudeTo;
+    this.longitudeTo = longitudeTo;
+    this.longitudeFrom = longitudeFrom;
     }
 
     public DistanceRequestDTO() {
