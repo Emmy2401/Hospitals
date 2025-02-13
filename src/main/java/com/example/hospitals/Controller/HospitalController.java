@@ -1,5 +1,6 @@
 package com.example.hospitals.Controller;
 
+import com.example.hospitals.DTO.DistanceRequestDTO;
 import com.example.hospitals.DTO.HospitalWithDistanceDTO;
 import com.example.hospitals.Entity.Hospital;
 import com.example.hospitals.Provider.JwtTokenProvider;
@@ -10,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
+
+
 
 @RestController
 @RequestMapping("/hospitals")
@@ -37,6 +40,17 @@ public class HospitalController {
         return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
     }
 
+    /**
+     * Endpoint pour récupérer le token stocké.
+     */
+    @GetMapping("/token")
+    public ResponseEntity<Map<String, String>> getToken() {
+        String token = userService.getToken();
+        if (token != null) {
+            return ResponseEntity.ok(Map.of("token", token, "type", "Bearer"));
+        }
+        return ResponseEntity.status(401).body(Map.of("error", "No token available"));
+    }
 
 
     @PostMapping
@@ -68,5 +82,16 @@ public class HospitalController {
             @RequestParam double refLat,
             @RequestParam double refLng) {
         return hospitalService.findHospitalsWithDistance(minBeds, specialtyName, refLat, refLng);
+    }
+    @PostMapping("/distance") //  Passe en POST
+    public ResponseEntity<Double> calculateDistance(@RequestBody DistanceRequestDTO request) {
+        System.out.println("*********************TEST TEST TEST TEST *********");
+        double distance = hospitalService.getDistance(
+                request.getLatitudeFrom(),
+                request.getLongitudeFrom(),
+                request.getLatitudeTo(),
+                request.getLongitudeTo()
+        );
+        return ResponseEntity.ok(distance);
     }
 }

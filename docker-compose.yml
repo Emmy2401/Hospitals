@@ -16,7 +16,7 @@ services:
     build: .
     container_name: hospital
     ports:
-      - "8085:8082"
+      - "8090:8085"
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/hospital_db
     depends_on:

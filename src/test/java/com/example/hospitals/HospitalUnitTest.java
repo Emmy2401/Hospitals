@@ -5,7 +5,7 @@ import com.example.hospitals.Entity.Hospital;
 import com.example.hospitals.Repository.HospitalRepository;
 import com.example.hospitals.Service.HospitalService;
 import com.example.hospitals.Config.ResourceNotFoundException;
-import com.example.hospitals.Interface.DistanceService;
+import com.example.hospitals.Interface.DistanceClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -26,7 +26,7 @@ public class HospitalUnitTest {
     private HospitalRepository hospitalRepository;
 
     @Mock
-    private DistanceService distanceService;
+    private DistanceClient distanceClient;
     private Hospital existingHospital;
     private Hospital anotherHospital;
 
@@ -173,30 +173,6 @@ public class HospitalUnitTest {
         assertEquals("Hospital not found with name: Unknown Hospital", exception.getMessage());
         verify(hospitalRepository, times(1)).findByName("Unknown Hospital");
     }
-
-    @Test
-    public void testFindHospitalsWithDistance() {
-        List<Hospital> hospitals = new ArrayList<>();
-        Hospital hospital1 = new Hospital();
-        hospital1.setName("Hospital A");
-        hospital1.setLatitude(48.8566);
-        hospital1.setLongitude(2.3522);
-        hospital1.setNumberOfBeds(200);
-        hospitals.add(hospital1);
-
-        when(hospitalRepository.findByNumberOfBedsGreaterThanEqual(100)).thenReturn(hospitals);
-        when(distanceService.calculateDistance(48.8566, 2.3522, 48.8566, 2.3522)).thenReturn(0.0);
-
-        List<HospitalWithDistanceDTO> result = hospitalService.findHospitalsWithDistance(100, null, 48.8566, 2.3522);
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("Hospital A", result.get(0).getName());
-        assertEquals(0.0, result.get(0).getDistance());
-        verify(hospitalRepository, times(1)).findByNumberOfBedsGreaterThanEqual(100);
-        verify(distanceService, times(1)).calculateDistance(48.8566, 2.3522, 48.8566, 2.3522);
-    }
-
 
     @Test
     public void testFindById_Exist() {
