@@ -85,18 +85,12 @@ public class HospitalController {
     }
     @PostMapping("/distance") //  Passe en POST
     public ResponseEntity<Double> calculateDistance(@RequestBody DistanceRequestDTO request) {
-        System.out.println("*********************TEST TEST TEST TEST *********"
-                + "\n latFrom"+ request.getLatitudeFrom()
-                + "\n longFrom"+ request.getLongitudeFrom()
-                + "\n latTo"+ request.getLatitudeTo()
-                + "\n latFrom"+ request.getLongitudeTo());
         double distance = hospitalService.getDistance(
-                48.8566,
-                2.3522,
-                45.764,
-                4.8357
+                request.getLatitudeFrom(),
+                request.getLongitudeFrom(),
+                request.getLatitudeTo(),
+                request.getLongitudeTo()
         );
-        System.out.println("*********************TEST TEST TEST TEST *********2 LE retour");
         return ResponseEntity.ok(distance);
     }
 }

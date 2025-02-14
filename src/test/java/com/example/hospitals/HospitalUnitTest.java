@@ -24,9 +24,10 @@ public class HospitalUnitTest {
 
     @Mock
     private HospitalRepository hospitalRepository;
-
     @Mock
     private DistanceClient distanceClient;
+    @Mock
+
     private Hospital existingHospital;
     private Hospital anotherHospital;
 
@@ -35,6 +36,7 @@ public class HospitalUnitTest {
     }
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
         existingHospital = new Hospital();
         existingHospital.setId(1L);
         existingHospital.setName("Old Hospital");
