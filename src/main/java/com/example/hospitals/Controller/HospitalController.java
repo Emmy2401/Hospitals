@@ -93,4 +93,10 @@ public class HospitalController {
         );
         return ResponseEntity.ok(distance);
     }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<Hospital>> getAllHospitals(@RequestHeader("Authorization") String token) {
+        List<Hospital> hospitals = hospitalService.getAllHospitals();
+        return ResponseEntity.ok(hospitals);
+    }
 }

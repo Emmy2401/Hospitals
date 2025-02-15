@@ -108,4 +108,9 @@ public class HospitalService {
         DistanceRequestDTO request = new DistanceRequestDTO(latitudeFrom, longitudeFrom, latitudeTo, longitudeTo);
         return distanceClient.calculateDistance(request); //  Envoie le DTO au lieu d'une Map
     }
+
+    public List<Hospital> getAllHospitals() {
+        return hospitalRepository.findAll();
+    }
+
 }
