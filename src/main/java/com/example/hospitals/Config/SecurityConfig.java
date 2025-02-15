@@ -23,11 +23,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.disable())
-                //.cors(cors -> cors.configurationSource(corsConfigurationSource)) // Configuration CORS
+                //.cors(cors -> cors.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource)) // Configuration CORS
                 .csrf(csrf -> csrf.disable()) // Désactiver CSRF si nécessaire
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/hospitals/login", "/hospitals/distance","/error").permitAll() // Routes publiques
+                        .requestMatchers("/hospitals/login", "/hospitals/distance","/error","/hospitals/getAll").permitAll() // Routes publiques
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated() // Toutes les autres routes nécessitent une authentification
                 )
