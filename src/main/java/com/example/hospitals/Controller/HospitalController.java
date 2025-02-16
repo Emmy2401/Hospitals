@@ -59,7 +59,7 @@ public class HospitalController {
     }
 
     @PutMapping(value = "/{id}")
-    public Hospital updateHospital(@RequestHeader("Authorization") String token,@PathVariable Long id, @RequestBody Hospital hospitalDetails) {
+    public Hospital updateHospital(@PathVariable Long id, @RequestBody Hospital hospitalDetails) {
         return hospitalService.updateHospital(id, hospitalDetails);
     }
 

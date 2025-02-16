@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource)) // Configuration CORS
                 .csrf(csrf -> csrf.disable()) // Désactiver CSRF si nécessaire
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/hospitals/login", "/hospitals/distance","/error","/hospitals","/hospitals/","hospitals/name/","hospitals/searchCriteria","hospitals/getAll").permitAll() // Routes publiques
+                        .requestMatchers("/hospitals/login", "/hospitals/distance","/error","/hospitals","/hospitals/","hospitals/name/","hospitals/searchCriteria","hospitals/getAll","hospitals/id/").permitAll() // Routes publiques
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated() // Toutes les autres routes nécessitent une authentification
                 )
