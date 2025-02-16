@@ -76,7 +76,6 @@ public class HospitalController {
 
     @GetMapping("/searchCriteria")
     public List<HospitalWithDistanceDTO> getHospitalsWithDistance(
-            @RequestHeader("Authorization") String token,
             @RequestParam(required = false) Integer minBeds,
             @RequestParam(required = false) String specialtyName,
             @RequestParam double refLat,

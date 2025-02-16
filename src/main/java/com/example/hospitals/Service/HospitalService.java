@@ -84,15 +84,21 @@ public class HospitalService {
 
         return hospitals.stream()
                 .map(hospital -> {
-                    // Utilisation de DistanceRequestDTO
+                    // Création du DTO pour envoyer à Feign Client
                     DistanceRequestDTO request = new DistanceRequestDTO(
                             refLat, refLng, hospital.getLatitude(), hospital.getLongitude()
                     );
 
-                    //  Appel correct de Feign Client avec DTO
+                    // Appel du microservice pour calculer la distance
                     double distance = distanceClient.calculateDistance(request);
 
-                    return new HospitalWithDistanceDTO(hospital.getName(), hospital.getNumberOfBeds(), specialtyName, distance);
+                    // Retourne le DTO avec toutes les données nécessaires
+                    return new HospitalWithDistanceDTO(
+                            hospital.getName(),
+                            hospital.getNumberOfBeds(),
+                            hospital.getSpecialties(), // On passe la vraie liste des spécialités
+                            distance
+                    );
                 })
                 .collect(Collectors.toList());
     }
