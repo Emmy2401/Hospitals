@@ -94,7 +94,7 @@ public class HospitalController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<Hospital>> getAllHospitals(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<Hospital>> getAllHospitals() {
         List<Hospital> hospitals = hospitalService.getAllHospitals();
         return ResponseEntity.ok(hospitals);
     }
