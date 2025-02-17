@@ -9,6 +9,7 @@ import com.example.hospitals.Repository.HospitalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,39 +70,58 @@ public class HospitalService {
                 .orElseThrow(() -> new ResourceNotFoundException("Hospital not found with name: " + name));
     }
 
-    public List<HospitalWithDistanceDTO> findHospitalsWithDistance(Integer minBeds, String specialtyName, double refLat, double refLng) {
+    public List<HospitalWithDistanceDTO> findHospitalsWithDistance(
+            Integer minBeds,
+            String specialtyName,
+            double refLat,
+            double refLng
+    ) {
+        // 1. Récupération des hôpitaux
+        //    Si tu as besoin de filtrer sur minBeds, tu peux utiliser la méthode correspondante ;
+        //    sinon, tu les récupères tous.
         List<Hospital> hospitals;
-
-        if (minBeds != null && specialtyName != null && !specialtyName.isEmpty()) {
-            hospitals = hospitalRepository.findByNumberOfBedsAndSpecialtiesName(minBeds, specialtyName);
-        } else if (minBeds != null) {
+        if (minBeds != null) {
             hospitals = hospitalRepository.findByNumberOfBedsGreaterThanEqual(minBeds);
-        } else if (specialtyName != null && !specialtyName.isEmpty()) {
-            hospitals = hospitalRepository.findBySpecialtiesName(specialtyName);
         } else {
             hospitals = hospitalRepository.findAll();
         }
 
+        // 2. Filtrer en mémoire sur la spécialité, s’il y en a une
+        if (specialtyName != null && !specialtyName.isEmpty()) {
+            // Filtrage sur la liste des spécialités dans l’objet Hospital
+            // Suppose que hospital.getSpecialties() est une List<String> ou List<Specialty>
+            hospitals = hospitals.stream()
+                    .filter(hospital -> hospital.getSpecialties().stream()
+                            .anyMatch(spe -> spe.getName().equalsIgnoreCase(specialtyName))
+                    )
+                    .collect(Collectors.toList());
+        }
+
+        // 3. Calculer la distance et mapper les résultats en DTO
         return hospitals.stream()
                 .map(hospital -> {
-                    // Création du DTO pour envoyer à Feign Client
                     DistanceRequestDTO request = new DistanceRequestDTO(
-                            refLat, refLng, hospital.getLatitude(), hospital.getLongitude()
+                            refLat,
+                            refLng,
+                            hospital.getLatitude(),
+                            hospital.getLongitude()
                     );
 
-                    // Appel du microservice pour calculer la distance
-                    double distance = distanceClient.calculateDistance(request);
+                    double distance = distanceClient.calculateDistance(request) / 1000;
 
-                    // Retourne le DTO avec toutes les données nécessaires
                     return new HospitalWithDistanceDTO(
                             hospital.getName(),
                             hospital.getNumberOfBeds(),
-                            hospital.getSpecialties(), // On passe la vraie liste des spécialités
+                            hospital.getSpecialties(),
                             distance
                     );
                 })
+                // 4. (Optionnel) Trier par distance la liste
+                .sorted(Comparator.comparingDouble(HospitalWithDistanceDTO::getDistance))
                 .collect(Collectors.toList());
     }
+
+
 
     public Hospital FindById(Long id) {
         if(id == null) {

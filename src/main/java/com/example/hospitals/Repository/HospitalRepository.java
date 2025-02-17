@@ -12,4 +12,5 @@ public interface HospitalRepository extends JpaRepository<Hospital, Long> {
     List<Hospital> findByNumberOfBedsGreaterThanEqual(Integer minBeds);
     List<Hospital> findBySpecialtiesName(String specialtyName);
     boolean existsByName(String name);
+    List<Hospital> findByNumberOfBedsGreaterThanEqualAndSpecialtiesName(Integer minBeds, String specialtyName);
 }
