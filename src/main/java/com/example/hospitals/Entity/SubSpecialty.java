@@ -1,5 +1,7 @@
 package com.example.hospitals.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -32,5 +34,19 @@ public class SubSpecialty {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "specialty_id")
+    private Specialty specialty;
+
+    // Getters & Setters
+    public Specialty getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(Specialty specialty) {
+        this.specialty = specialty;
     }
 }

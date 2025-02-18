@@ -4,21 +4,26 @@ import com.example.hospitals.Config.ResourceNotFoundException;
 import com.example.hospitals.DTO.DistanceRequestDTO;
 import com.example.hospitals.DTO.HospitalWithDistanceDTO;
 import com.example.hospitals.Entity.Hospital;
+import com.example.hospitals.Entity.Specialty;
+import com.example.hospitals.Entity.SubSpecialty;
 import com.example.hospitals.Interface.DistanceClient;
 import com.example.hospitals.Repository.HospitalRepository;
+import com.example.hospitals.Repository.SpecialtyRepository;
+import com.example.hospitals.Repository.SubSpecialtyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class HospitalService {
     @Autowired
     private HospitalRepository hospitalRepository;
+    @Autowired
+    private SpecialtyRepository specialtyRepository;
+    @Autowired
+    private SubSpecialtyRepository subSpecialtyRepository; ;
 
     private final DistanceClient distanceClient;
     public HospitalService(DistanceClient distanceClient) {
@@ -30,10 +35,39 @@ public class HospitalService {
             throw new IllegalArgumentException("Hospital cannot be null");
         }
 
-        // Vérifier si le nom existe déjà
+        // Vérifier si l'hôpital existe déjà
         if (hospitalRepository.existsByName(hospital.getName())) {
             throw new IllegalArgumentException("A hospital with this name already exists.");
         }
+
+        // Vérifier et enregistrer les spécialités sans se prendre la tête
+        List<Specialty> existingSpecialties = new ArrayList<>();
+
+        for (Specialty specialty : hospital.getSpecialties()) {
+            Specialty existingSpecialty = specialtyRepository.findByName(specialty.getName()).orElse(null);
+
+            if (existingSpecialty == null) {
+                // Forcer l'enregistrement si elle n'existe pas
+                existingSpecialty = specialtyRepository.save(new Specialty(specialty.getName()));
+            }
+
+            // Ajouter directement les sous-spécialités sans trop chercher
+            for (SubSpecialty sub : specialty.getSubSpecialties()) {
+                if (!existingSpecialty.getSubSpecialties().contains(sub)) {
+                    sub.setSpecialty(existingSpecialty);
+                    existingSpecialty.getSubSpecialties().add(sub);
+                }
+            }
+
+            // Sauvegarde un peu sale, mais qui fonctionne
+            existingSpecialty = specialtyRepository.save(existingSpecialty);
+
+            if (!existingSpecialties.contains(existingSpecialty)) {
+                existingSpecialties.add(existingSpecialty);
+            }
+        }
+
+        hospital.setSpecialties(existingSpecialties);
 
         return hospitalRepository.save(hospital);
     }
@@ -51,15 +85,40 @@ public class HospitalService {
                         throw new IllegalArgumentException("A hospital with this name already exists.");
                     }
 
+                    // Met à jour les données de base de l'hôpital
                     existingHospital.setName(hospitalDetails.getName());
                     existingHospital.setLatitude(hospitalDetails.getLatitude());
                     existingHospital.setLongitude(hospitalDetails.getLongitude());
                     existingHospital.setNumberOfBeds(hospitalDetails.getNumberOfBeds());
 
+                    // Mise à jour des spécialités et sous-spécialités
+                    List<Specialty> updatedSpecialties = hospitalDetails.getSpecialties().stream()
+                            .map(specialty -> {
+                                Specialty existingSpecialty = specialtyRepository.findByName(specialty.getName())
+                                        .orElseGet(() -> specialtyRepository.save(new Specialty(specialty.getName())));
+
+                                // Mise à jour des sous-spécialités correctement pour éviter les suppressions orphelines
+                                existingSpecialty.getSubSpecialties().clear();
+                                specialty.getSubSpecialties().forEach(sub -> {
+                                    SubSpecialty existingSubSpecialty = subSpecialtyRepository.findByName(sub.getName())
+                                            .orElseGet(() -> subSpecialtyRepository.save(new SubSpecialty(sub.getName())));
+                                    existingSubSpecialty.setSpecialty(existingSpecialty);
+                                    existingSpecialty.getSubSpecialties().add(existingSubSpecialty);
+                                });
+
+                                return existingSpecialty;
+                            })
+                            .collect(Collectors.toList());
+
+                    // Met à jour la liste des spécialités de l'hôpital
+                    existingHospital.setSpecialties(updatedSpecialties);
+
                     return hospitalRepository.save(existingHospital);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Hospital with id " + id + " not found"));
     }
+
+
 
 
     public Hospital findByName(String name) {
@@ -76,28 +135,32 @@ public class HospitalService {
             double refLat,
             double refLng
     ) {
-        // 1. Récupération des hôpitaux
-        //    Si tu as besoin de filtrer sur minBeds, tu peux utiliser la méthode correspondante ;
-        //    sinon, tu les récupères tous.
         List<Hospital> hospitals;
-        if (minBeds != null) {
-            hospitals = hospitalRepository.findByNumberOfBedsGreaterThanEqual(minBeds);
-        } else {
-            hospitals = hospitalRepository.findAll();
-        }
 
-        // 2. Filtrer en mémoire sur la spécialité, s’il y en a une
-        if (specialtyName != null && !specialtyName.isEmpty()) {
-            // Filtrage sur la liste des spécialités dans l’objet Hospital
-            // Suppose que hospital.getSpecialties() est une List<String> ou List<Specialty>
-            hospitals = hospitals.stream()
+        if (minBeds != null && specialtyName != null && !specialtyName.isEmpty()) {
+            hospitals = hospitalRepository.findByNumberOfBedsGreaterThanEqual(minBeds)
+                    .stream()
+                    .filter(hospital -> hospital.getSpecialties() != null && !hospital.getSpecialties().isEmpty()) // Exclure ceux sans spécialité
                     .filter(hospital -> hospital.getSpecialties().stream()
-                            .anyMatch(spe -> spe.getName().equalsIgnoreCase(specialtyName))
-                    )
+                            .anyMatch(specialty -> specialty.getName().equalsIgnoreCase(specialtyName)))
+                    .collect(Collectors.toList());
+        } else if (minBeds != null) {
+            hospitals = hospitalRepository.findByNumberOfBedsGreaterThanEqual(minBeds)
+                    .stream()
+                    .filter(hospital -> hospital.getSpecialties() != null && !hospital.getSpecialties().isEmpty()) // Exclure ceux sans spécialité
+                    .collect(Collectors.toList());
+        } else if (specialtyName != null && !specialtyName.isEmpty()) {
+            hospitals = hospitalRepository.findBySpecialties_NameIgnoreCase(specialtyName)
+                    .stream()
+                    .filter(hospital -> hospital.getSpecialties() != null && !hospital.getSpecialties().isEmpty()) // Exclure ceux sans spécialité
+                    .collect(Collectors.toList());
+        } else {
+            hospitals = hospitalRepository.findAll()
+                    .stream()
+                    .filter(hospital -> hospital.getSpecialties() != null && !hospital.getSpecialties().isEmpty()) // Exclure ceux sans spécialité
                     .collect(Collectors.toList());
         }
 
-        // 3. Calculer la distance et mapper les résultats en DTO
         return hospitals.stream()
                 .map(hospital -> {
                     DistanceRequestDTO request = new DistanceRequestDTO(
@@ -107,7 +170,8 @@ public class HospitalService {
                             hospital.getLongitude()
                     );
 
-                    double distance = distanceClient.calculateDistance(request) / 1000;
+                    double distance = distanceClient.calculateDistance(request) /1000;
+
 
                     return new HospitalWithDistanceDTO(
                             hospital.getName(),
@@ -116,10 +180,10 @@ public class HospitalService {
                             distance
                     );
                 })
-                // 4. (Optionnel) Trier par distance la liste
                 .sorted(Comparator.comparingDouble(HospitalWithDistanceDTO::getDistance))
                 .collect(Collectors.toList());
     }
+
 
 
 

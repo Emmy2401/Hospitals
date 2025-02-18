@@ -1,5 +1,6 @@
 package com.example.hospitals.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ public class Specialty {
 
     @NotNull
     private String name;
+    @ManyToMany(mappedBy = "specialties")
+    private List<Hospital> hospitals = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubSpecialty> subSpecialties = new ArrayList<>();

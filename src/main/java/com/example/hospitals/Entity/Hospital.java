@@ -19,7 +19,10 @@ public class Hospital {
     private Double longitude;
     @NotNull
     private Integer numberOfBeds;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany
+    @JoinTable(name = "hospital_specialty",
+            joinColumns = @JoinColumn(name = "hospital_id"),
+            inverseJoinColumns = @JoinColumn(name = "specialty_id"))
     private List<Specialty> specialties = new ArrayList<>();
 
     // Constructors

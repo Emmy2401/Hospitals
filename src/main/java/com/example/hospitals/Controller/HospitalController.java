@@ -54,7 +54,7 @@ public class HospitalController {
 
 
     @PostMapping
-    public Hospital addHospital(@RequestHeader("Authorization") String token,@RequestBody Hospital hospital) {
+    public Hospital addHospital(@RequestBody Hospital hospital) {
         return hospitalService.addHospital(hospital);
     }
 
