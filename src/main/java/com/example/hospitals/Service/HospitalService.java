@@ -147,30 +147,28 @@ public class HospitalService {
     ) {
         List<Hospital> hospitals;
 
+        //  Étape 1 : Filtrage basé uniquement sur minBeds et specialtyName
         if (minBeds != null && specialtyName != null && !specialtyName.isEmpty()) {
+            System.out.println(" Recherche avec minBeds = " + minBeds + " et specialty = " + specialtyName);
             hospitals = hospitalRepository.findByNumberOfBedsGreaterThanEqual(minBeds)
                     .stream()
-                    .filter(hospital -> hospital.getSpecialties() != null && !hospital.getSpecialties().isEmpty()) // Exclure ceux sans spécialité
                     .filter(hospital -> hospital.getSpecialties().stream()
                             .anyMatch(specialty -> specialty.getName().equalsIgnoreCase(specialtyName)))
                     .collect(Collectors.toList());
         } else if (minBeds != null) {
-            hospitals = hospitalRepository.findByNumberOfBedsGreaterThanEqual(minBeds)
-                    .stream()
-                    .filter(hospital -> hospital.getSpecialties() != null && !hospital.getSpecialties().isEmpty()) // Exclure ceux sans spécialité
-                    .collect(Collectors.toList());
+            System.out.println(" Recherche avec minBeds = " + minBeds);
+            hospitals = hospitalRepository.findByNumberOfBedsGreaterThanEqual(minBeds);
         } else if (specialtyName != null && !specialtyName.isEmpty()) {
-            hospitals = hospitalRepository.findBySpecialties_NameIgnoreCase(specialtyName)
-                    .stream()
-                    .filter(hospital -> hospital.getSpecialties() != null && !hospital.getSpecialties().isEmpty()) // Exclure ceux sans spécialité
-                    .collect(Collectors.toList());
+            System.out.println(" Recherche avec specialty = " + specialtyName);
+            hospitals = hospitalRepository.findBySpecialties_NameIgnoreCase(specialtyName);
         } else {
-            hospitals = hospitalRepository.findAll()
-                    .stream()
-                    .filter(hospital -> hospital.getSpecialties() != null && !hospital.getSpecialties().isEmpty()) // Exclure ceux sans spécialité
-                    .collect(Collectors.toList());
+            System.out.println(" Recherche de tous les hôpitaux");
+            hospitals = hospitalRepository.findAll();
         }
 
+        System.out.println(" Hôpitaux filtrés avant calcul de distance : " + hospitals.size());
+
+        //  Étape 2 : Calculer les distances mais ne pas filtrer dessus
         return hospitals.stream()
                 .map(hospital -> {
                     DistanceRequestDTO request = new DistanceRequestDTO(
@@ -180,8 +178,8 @@ public class HospitalService {
                             hospital.getLongitude()
                     );
 
-                    double distance = distanceClient.calculateDistance(request) /1000;
-
+                    double distance = distanceClient.calculateDistance(request) / 1000; // Convertir en km
+                    System.out.println(" Distance pour " + hospital.getName() + " : " + distance + " km");
 
                     return new HospitalWithDistanceDTO(
                             hospital.getName(),
@@ -190,9 +188,10 @@ public class HospitalService {
                             distance
                     );
                 })
-                .sorted(Comparator.comparingDouble(HospitalWithDistanceDTO::getDistance))
+                .sorted(Comparator.comparingDouble(HospitalWithDistanceDTO::getDistance)) // Trier par distance
                 .collect(Collectors.toList());
     }
+
 
 
 
