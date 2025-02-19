@@ -38,7 +38,7 @@ jobs:
 
       # Optionnel : publier les résultats de build comme artefact
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: backend-artifact
           path: target/*.jar # Si tu utilises Maven, sinon ajuster le chemin
