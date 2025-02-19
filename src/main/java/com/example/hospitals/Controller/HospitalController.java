@@ -58,7 +58,7 @@ public class HospitalController {
         return hospitalService.addHospital(hospital);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = "/update/{id}")
     public Hospital updateHospital(@PathVariable Long id, @RequestBody Hospital hospitalDetails) {
         return hospitalService.updateHospital(id, hospitalDetails);
     }

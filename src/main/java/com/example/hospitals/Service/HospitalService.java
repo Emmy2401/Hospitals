@@ -79,45 +79,55 @@ public class HospitalService {
 
         return hospitalRepository.findById(id)
                 .map(existingHospital -> {
-                    // Vérifie si le nom est changé et existe déjà pour un autre hôpital
+                    // Vérifier si le nom est modifié et existe déjà pour un autre hôpital
                     if (!existingHospital.getName().equals(hospitalDetails.getName()) &&
                             hospitalRepository.existsByName(hospitalDetails.getName())) {
                         throw new IllegalArgumentException("A hospital with this name already exists.");
                     }
 
-                    // Met à jour les données de base de l'hôpital
+                    //  Mise à jour des informations générales
                     existingHospital.setName(hospitalDetails.getName());
                     existingHospital.setLatitude(hospitalDetails.getLatitude());
                     existingHospital.setLongitude(hospitalDetails.getLongitude());
                     existingHospital.setNumberOfBeds(hospitalDetails.getNumberOfBeds());
 
-                    // Mise à jour des spécialités et sous-spécialités
-                    List<Specialty> updatedSpecialties = hospitalDetails.getSpecialties().stream()
-                            .map(specialty -> {
-                                Specialty existingSpecialty = specialtyRepository.findByName(specialty.getName())
-                                        .orElseGet(() -> specialtyRepository.save(new Specialty(specialty.getName())));
+                    //  Gestion des spécialités
+                    List<Specialty> updatedSpecialties = new ArrayList<>();
 
-                                // Mise à jour des sous-spécialités correctement pour éviter les suppressions orphelines
-                                existingSpecialty.getSubSpecialties().clear();
-                                specialty.getSubSpecialties().forEach(sub -> {
-                                    SubSpecialty existingSubSpecialty = subSpecialtyRepository.findByName(sub.getName())
-                                            .orElseGet(() -> subSpecialtyRepository.save(new SubSpecialty(sub.getName())));
-                                    existingSubSpecialty.setSpecialty(existingSpecialty);
-                                    existingSpecialty.getSubSpecialties().add(existingSubSpecialty);
-                                });
+                    for (Specialty specialty : hospitalDetails.getSpecialties()) {
+                        // Vérifier si la spécialité existe déjà
+                        Specialty existingSpecialty = specialtyRepository.findByName(specialty.getName())
+                                .orElseGet(() -> specialtyRepository.save(new Specialty(specialty.getName())));
 
-                                return existingSpecialty;
-                            })
-                            .collect(Collectors.toList());
+                        //  Mise à jour des sous-spécialités sans vider la liste
+                        Set<SubSpecialty> existingSubSpecialties = new HashSet<>(existingSpecialty.getSubSpecialties());
+                        Set<SubSpecialty> updatedSubSpecialties = new HashSet<>();
 
-                    // Met à jour la liste des spécialités de l'hôpital
-                    existingHospital.setSpecialties(updatedSpecialties);
+                        for (SubSpecialty sub : specialty.getSubSpecialties()) {
+                            SubSpecialty existingSubSpecialty = subSpecialtyRepository.findByName(sub.getName())
+                                    .orElseGet(() -> subSpecialtyRepository.save(new SubSpecialty(sub.getName())));
+
+                            existingSubSpecialty.setSpecialty(existingSpecialty);
+                            updatedSubSpecialties.add(existingSubSpecialty);
+                        }
+
+                        // Comparer les sous-spécialités avant d'appliquer la mise à jour
+                        if (!existingSubSpecialties.equals(updatedSubSpecialties)) {
+                            existingSpecialty.getSubSpecialties().clear();
+                            existingSpecialty.getSubSpecialties().addAll(updatedSubSpecialties);
+                        }
+
+                        updatedSpecialties.add(existingSpecialty);
+                    }
+
+                    //  Mise à jour propre des spécialités sans `orphanRemoval` involontaire
+                    existingHospital.getSpecialties().clear();
+                    existingHospital.getSpecialties().addAll(updatedSpecialties);
 
                     return hospitalRepository.save(existingHospital);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Hospital with id " + id + " not found"));
     }
-
 
 
 

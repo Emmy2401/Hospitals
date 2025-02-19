@@ -8,14 +8,14 @@ import java.util.Optional;
 public interface HospitalRepository extends JpaRepository<Hospital, Long> {
     Optional<Hospital> findByName(String name);
     Optional<Hospital> findById(Long id);
-    List<Hospital> findByNumberOfBedsGreaterThanEqualAndSpecialties_NameIgnoreCase(Integer minBeds, String specialtyName);
+   // List<Hospital> findByNumberOfBedsGreaterThanEqualAndSpecialties_NameIgnoreCase(Integer minBeds, String specialtyName);
 
-    List<Hospital> findByNumberOfBedsAndSpecialtiesName(Integer minBeds, String specialtyName);
+   // List<Hospital> findByNumberOfBedsAndSpecialtiesName(Integer minBeds, String specialtyName);
     List<Hospital> findByNumberOfBedsGreaterThanEqual(Integer minBeds);
     List<Hospital> findBySpecialtiesName(String specialtyName);
     boolean existsByName(String name);
-    List<Hospital> findBySpecialtiesNameIgnoreCase(String specialtyName);
-    List<Hospital> findByNumberOfBedsGreaterThanEqualAndSpecialtiesName(Integer minBeds, String specialtyName);
+   // List<Hospital> findBySpecialtiesNameIgnoreCase(String specialtyName);
+   // List<Hospital> findByNumberOfBedsGreaterThanEqualAndSpecialtiesName(Integer minBeds, String specialtyName);
 
     List<Hospital> findBySpecialties_NameIgnoreCase(String specialtyName);
 }

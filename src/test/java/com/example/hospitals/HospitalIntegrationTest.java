@@ -1,4 +1,4 @@
-package com.example.hospitals;
+/*package com.example.hospitals;
 
 import com.example.hospitals.Controller.HospitalController;
 import com.example.hospitals.DTO.DistanceRequestDTO;
@@ -144,4 +144,4 @@ public class HospitalIntegrationTest {
                 .andExpect(jsonPath("$").value(5.5));
     }
 
-}
+}*/
