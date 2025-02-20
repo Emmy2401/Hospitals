@@ -27,8 +27,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource)) // Configuration CORS
                 .csrf(csrf -> csrf.disable()) // Désactiver CSRF si nécessaire
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/hospitals/login", "/hospitals/distance","/error","/hospitals/update/{id}","/hospitals","/hospitals/","hospitals/name/","hospitals/searchCriteria","hospitals/getAll","hospitals/id/{id}").permitAll() // Routes publiques
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/hospitals/login", "/hospitals/distance","/error","/hospitals/token","hospitals/id/{id}").permitAll() // Routes publiques
+                        //.requestMatchers("/hospitals/getAll").hasRole("USER")
                         .anyRequest().authenticated() // Toutes les autres routes nécessitent une authentification
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

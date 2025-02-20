@@ -6,9 +6,12 @@ import com.example.hospitals.Entity.Hospital;
 import com.example.hospitals.Provider.JwtTokenProvider;
 import com.example.hospitals.Service.HospitalService;
 import com.example.hospitals.Service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -53,13 +56,18 @@ public class HospitalController {
     }
 
 
-    @PostMapping
-    public Hospital addHospital(@RequestBody Hospital hospital) {
+    @PostMapping(value = "/add", consumes = "text/plain", produces = "application/json")
+    public Hospital addHospital(@RequestHeader("Authorization") String token, @RequestBody String rawText) throws IOException {
+        // Instanciation directe de ObjectMapper dans la méthode
+        ObjectMapper objectMapper = new ObjectMapper();
+        Hospital hospital = objectMapper.readValue(rawText, Hospital.class);
+
+        // Sauvegarde dans le service
         return hospitalService.addHospital(hospital);
     }
 
     @PutMapping(value = "/update/{id}")
-    public Hospital updateHospital(@PathVariable Long id, @RequestBody Hospital hospitalDetails) {
+    public Hospital updateHospital( @RequestHeader("Authorization") String token,@PathVariable Long id, @RequestBody Hospital hospitalDetails) {
         return hospitalService.updateHospital(id, hospitalDetails);
     }
 
@@ -76,6 +84,7 @@ public class HospitalController {
 
     @GetMapping("/searchCriteria")
     public List<HospitalWithDistanceDTO> getHospitalsWithDistance(
+            @RequestHeader("Authorization") String token,
             @RequestParam(required = false) Integer minBeds,
             @RequestParam(required = false) String specialtyName,
             @RequestParam double refLat,
@@ -94,7 +103,7 @@ public class HospitalController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<Hospital>> getAllHospitals() {
+    public ResponseEntity<List<Hospital>> getAllHospitals( @RequestHeader("Authorization") String token) {
         List<Hospital> hospitals = hospitalService.getAllHospitals();
         return ResponseEntity.ok(hospitals);
     }
