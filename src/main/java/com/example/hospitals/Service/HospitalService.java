@@ -72,20 +72,19 @@ public class HospitalService {
         return hospitalRepository.save(hospital);
     }
 
-    public Hospital updateHospital(Long id, Hospital hospitalDetails) {
+    public Hospital detailHospital(Long id, Hospital hospitalDetails) {
         if (hospitalDetails == null) {
             throw new IllegalArgumentException("Hospital details cannot be null");
         }
 
         return hospitalRepository.findById(id)
                 .map(existingHospital -> {
-                    // Vérifier si le nom est modifié et existe déjà pour un autre hôpital
                     if (!existingHospital.getName().equals(hospitalDetails.getName()) &&
                             hospitalRepository.existsByName(hospitalDetails.getName())) {
                         throw new IllegalArgumentException("A hospital with this name already exists.");
                     }
 
-                    //  Mise à jour des informations générales
+
                     existingHospital.setName(hospitalDetails.getName());
                     existingHospital.setLatitude(hospitalDetails.getLatitude());
                     existingHospital.setLongitude(hospitalDetails.getLongitude());
@@ -95,11 +94,11 @@ public class HospitalService {
                     List<Specialty> updatedSpecialties = new ArrayList<>();
 
                     for (Specialty specialty : hospitalDetails.getSpecialties()) {
-                        // Vérifier si la spécialité existe déjà
+
                         Specialty existingSpecialty = specialtyRepository.findByName(specialty.getName())
                                 .orElseGet(() -> specialtyRepository.save(new Specialty(specialty.getName())));
 
-                        //  Mise à jour des sous-spécialités sans vider la liste
+
                         Set<SubSpecialty> existingSubSpecialties = new HashSet<>(existingSpecialty.getSubSpecialties());
                         Set<SubSpecialty> updatedSubSpecialties = new HashSet<>();
 
@@ -111,7 +110,7 @@ public class HospitalService {
                             updatedSubSpecialties.add(existingSubSpecialty);
                         }
 
-                        // Comparer les sous-spécialités avant d'appliquer la mise à jour
+
                         if (!existingSubSpecialties.equals(updatedSubSpecialties)) {
                             existingSpecialty.getSubSpecialties().clear();
                             existingSpecialty.getSubSpecialties().addAll(updatedSubSpecialties);
@@ -120,7 +119,7 @@ public class HospitalService {
                         updatedSpecialties.add(existingSpecialty);
                     }
 
-                    //  Mise à jour propre des spécialités sans `orphanRemoval` involontaire
+
                     existingHospital.getSpecialties().clear();
                     existingHospital.getSpecialties().addAll(updatedSpecialties);
 

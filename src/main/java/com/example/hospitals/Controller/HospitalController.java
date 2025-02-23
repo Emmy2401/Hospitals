@@ -3,7 +3,6 @@ package com.example.hospitals.Controller;
 import com.example.hospitals.DTO.DistanceRequestDTO;
 import com.example.hospitals.DTO.HospitalWithDistanceDTO;
 import com.example.hospitals.Entity.Hospital;
-import com.example.hospitals.Provider.JwtTokenProvider;
 import com.example.hospitals.Service.HospitalService;
 import com.example.hospitals.Service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -66,9 +65,9 @@ public class HospitalController {
         return hospitalService.addHospital(hospital);
     }
 
-    @PutMapping(value = "/update/{id}")
-    public Hospital updateHospital( @RequestHeader("Authorization") String token,@PathVariable Long id, @RequestBody Hospital hospitalDetails) {
-        return hospitalService.updateHospital(id, hospitalDetails);
+    @PostMapping(value = "/detail/{id}")
+    public Hospital detailHospital(@RequestHeader("Authorization") String token, @PathVariable Long id, @RequestBody Hospital hospitalDetails) {
+        return hospitalService.detailHospital(id, hospitalDetails);
     }
 
     @GetMapping(value = "/name/{name}")

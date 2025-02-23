@@ -1,6 +1,5 @@
 package com.example.hospitals;
 
-import com.example.hospitals.DTO.HospitalWithDistanceDTO;
 import com.example.hospitals.Entity.Hospital;
 import com.example.hospitals.Repository.HospitalRepository;
 import com.example.hospitals.Service.HospitalService;
@@ -12,8 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -90,7 +87,7 @@ public class HospitalUnitTest {
         when(hospitalRepository.findById(1L)).thenReturn(Optional.of(existingHospital));
         when(hospitalRepository.save(existingHospital)).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Hospital result = hospitalService.updateHospital(1L, existingHospital);
+        Hospital result = hospitalService.detailHospital(1L, existingHospital);
 
         assertNotNull(result);
         assertEquals("Old Hospital", result.getName()); // Pas de changement de nom
@@ -110,7 +107,7 @@ public class HospitalUnitTest {
         when(hospitalRepository.existsByName("Unique Hospital")).thenReturn(false);
         when(hospitalRepository.save(existingHospital)).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Hospital result = hospitalService.updateHospital(1L, updatedDetails);
+        Hospital result = hospitalService.detailHospital(1L, updatedDetails);
 
         assertNotNull(result);
         assertEquals("Unique Hospital", result.getName());
@@ -131,7 +128,7 @@ public class HospitalUnitTest {
         when(hospitalRepository.existsByName("New Hospital")).thenReturn(true);
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            hospitalService.updateHospital(1L, updatedDetails);
+            hospitalService.detailHospital(1L, updatedDetails);
         });
 
         assertEquals("A hospital with this name already exists.", exception.getMessage());
@@ -145,7 +142,7 @@ public class HospitalUnitTest {
     public void testUpdateHospital_NotFound() {
         when(hospitalRepository.findById(999L)).thenReturn(Optional.empty());
 
-        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> hospitalService.updateHospital(999L, new Hospital()));
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> hospitalService.detailHospital(999L, new Hospital()));
 
         assertEquals("Hospital with id 999 not found", exception.getMessage());
         verify(hospitalRepository, times(1)).findById(999L);

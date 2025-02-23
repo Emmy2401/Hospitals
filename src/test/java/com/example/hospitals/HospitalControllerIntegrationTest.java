@@ -44,11 +44,7 @@ public class HospitalControllerIntegrationTest {
     @Autowired
     private HospitalService hospitalService;
 
-    @BeforeEach
-    void setUp() {
-        // Nettoyer la table avant chaque test (pour éviter les interférences)
-        hospitalRepository.deleteAll();
-    }
+   
 
     /**
      *  Tester la récupération d'un hôpital par son ID (GET /id/{id})
