@@ -44,7 +44,7 @@ public class HospitalControllerIntegrationTest {
     @Autowired
     private HospitalService hospitalService;
 
-   
+
 
     /**
      *  Tester la récupération d'un hôpital par son ID (GET /id/{id})
