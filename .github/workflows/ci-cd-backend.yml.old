@@ -13,32 +13,32 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      # Récupère le code du dépôt
+      # 1. Récupérer le code du dépôt
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Configure JDK (Java Development Kit)
-      - name: Set up JDK 21
-        uses: actions/setup-java@v2
+      # 2. Configurer JDK (Java Development Kit) - Utiliser une version LTS (17 ou 21)
+      - name: Set up JDK
+        uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'  # Ou adoptium pour la distribution d'OpenJDK
-          java-version: '21'
+          distribution: 'temurin'  # ou adoptium (selon la distribution souhaitée)
+          java-version: '17'
 
-      # Installer les dépendances avec Maven
+      # 3. Installer les dépendances avec Maven
       - name: Install dependencies (Maven)
         run: mvn install -DskipTests=true
 
-      # Exécuter les tests unitaires
+      # 4. Exécuter les tests unitaires
       - name: Run tests
         run: mvn test
 
-      # Build le projet pour générer un artefact
+      # 5. Construire le projet pour générer l’artefact
       - name: Build backend
         run: mvn clean package -DskipTests=true
 
-      # Optionnel : publier les résultats de build comme artefact
+      # 6. (Optionnel) Publier les résultats de build comme artefact
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: backend-artifact
-          path: target/*.jar # Si tu utilises Maven, sinon ajuster le chemin
+          path: target/*.jar  # Ajustez si besoin selon votre configuration
