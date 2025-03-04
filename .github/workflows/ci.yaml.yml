@@ -1,43 +1,44 @@
-name: CI DockerHub
+name: CI pour le Backend (Spring Boot)
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - "main" # ou la branche que tu utilises pour déployer
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - "main"
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-22.04
 
     steps:
-      - name: Check out code
+      # 1. Récupérer le code du dépôt
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 23
+      # 2. Configurer JDK (Java Development Kit) - Utiliser une version LTS (17 ou 21)
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '23'
-          # ou '21', selon la version de Java que tu utilises
-          # '23' n'est pas encore LTS et peut ne pas être supporté par setup-java
+          distribution: 'temurin'  # ou adoptium (selon la distribution souhaitée)
+          java-version: '17'
 
-      - name: Build and Test with Maven
-        run: mvn clean install
+      # 3. Installer les dépendances avec Maven
+      - name: Install dependencies (Maven)
+        run: mvn install -DskipTests=true
 
-  build-and-push-docker:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
+      # 4. Exécuter les tests unitaires
+      - name: Run tests
+        run: mvn test
 
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      # 5. Construire le projet pour générer l’artefact
+      - name: Build backend
+        run: mvn clean package -DskipTests=true
 
-      - name: Build Docker image
-        run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/hospitals-backend:latest .
-
-      - name: Push Docker image
-        run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/hospitals-backend:latest
+      # 6. (Optionnel) Publier les résultats de build comme artefact
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-artifact
+          path: target/*.jar  # Ajustez si besoin selon votre configuration
