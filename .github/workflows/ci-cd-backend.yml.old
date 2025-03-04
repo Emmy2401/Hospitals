@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'  # ou adoptium (selon la distribution souhaitée)
-          java-version: '17'
+          java-version: 23-ea
 
       # 3. Installer les dépendances avec Maven
       - name: Install dependencies (Maven)
