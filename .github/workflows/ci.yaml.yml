@@ -3,7 +3,7 @@ name: CI pour le Backend (Spring Boot)
 on:
   push:
     branches:
-      - "main" # ou la branche que tu utilises pour déployer
+      - "main"
   pull_request:
     branches:
       - "main"
@@ -17,14 +17,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Configurer JDK (Java Development Kit) - Utiliser une version LTS (17 ou 21)
+      # 2. Configurer JDK (Java 17 LTS)
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'  # ou adoptium (selon la distribution souhaitée)
-          java-version: '17'
+          distribution: 'temurin'  # Distribution Temurin (Adoptium)
+          java-version: '17'       # Version LTS (peut-être '21' si vous préférez)
 
-      # 3. Installer les dépendances avec Maven
+      # 3. Installer les dépendances avec Maven (sans exécuter les tests)
       - name: Install dependencies (Maven)
         run: mvn install -DskipTests=true
 
@@ -32,13 +32,13 @@ jobs:
       - name: Run tests
         run: mvn test
 
-      # 5. Construire le projet pour générer l’artefact
+      # 5. Construire le jar (artefact)
       - name: Build backend
         run: mvn clean package -DskipTests=true
 
-      # 6. (Optionnel) Publier les résultats de build comme artefact
+      # 6. Publier l'artefact (optionnel)
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: backend-artifact
-          path: target/*.jar  # Ajustez si besoin selon votre configuration
+          path: target/*.jar
