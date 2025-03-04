@@ -13,7 +13,8 @@ services:
       - db_data:/var/lib/mysql
 
   hospital:
-    build: .
+    #build: .
+    image: emmyle/hospitals-backend:latest
     container_name: hospital
     ports:
       - "8090:8085"
