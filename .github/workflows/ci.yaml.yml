@@ -17,12 +17,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Configurer JDK (Java 17 LTS)
+      # 2. Configurer JDK (Java 21 LTS)
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'  # Distribution Temurin (Adoptium)
-          java-version: '17'       # Version LTS (peut-être '21' si vous préférez)
+          java-version: '21'       # Version LTS (peut-être '21' si vous préférez)
 
       # 3. Installer les dépendances avec Maven (sans exécuter les tests)
       - name: Install dependencies (Maven)
