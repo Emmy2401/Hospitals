@@ -53,11 +53,11 @@ jobs:
 
       # 7. Construire l'image Docker
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-backend:${{ github.sha }} .
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-backend:latest .
 
       # 8. Pousser l'image Docker (avec le tag SHA)
       - name: Push Docker image (SHA)
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-backend:${{ github.sha }}
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-backend:latest
 
       # 9. (Optionnel) Tagger et pousser la même image en "latest" uniquement si on est sur la branche main
       - name: Tag and push Docker image as latest
