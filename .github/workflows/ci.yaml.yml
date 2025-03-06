@@ -51,15 +51,15 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 7. Construire l'image Docker
-      - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/hospitals-hospital:latest .
+      # 7. Construire l'image Docker avec le tag correspondant au SHA du commit
+      - name: Build Docker image (SHA)
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/hospitals-hospital:${{ github.sha }} .
 
-      # 8. Pousser l'image Docker (avec le tag SHA)
+      # 8. Pousser l'image Docker (tag SHA) vers Docker Hub
       - name: Push Docker image (SHA)
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/hospitals-hospital:latest
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/hospitals-hospital:${{ github.sha }}
 
-      # 9. (Optionnel) Tagger et pousser la même image en "latest" uniquement si on est sur la branche main
+      # 9. Retaguer l’image SHA en "latest" et la pousser, uniquement si on est sur la branche main
       - name: Tag and push Docker image as latest
         if: github.ref == 'refs/heads/main'
         run: |
