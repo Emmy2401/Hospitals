@@ -53,19 +53,19 @@ jobs:
 
       # 7. Construire l'image Docker
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-backend:latest .
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/hospitals-hospital:latest .
 
       # 8. Pousser l'image Docker (avec le tag SHA)
       - name: Push Docker image (SHA)
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-backend:latest
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/hospitals-hospital:latest
 
       # 9. (Optionnel) Tagger et pousser la même image en "latest" uniquement si on est sur la branche main
       - name: Tag and push Docker image as latest
         if: github.ref == 'refs/heads/main'
         run: |
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-backend:${{ github.sha }} \
-                     ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-backend:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/spring-boot-backend:latest
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/hospitals-hospital:${{ github.sha }} \
+                     ${{ secrets.DOCKERHUB_USERNAME }}/hospitals-hospital:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/hospitals-hospital:latest
 
       # 10. (Optionnel) Publier le .jar comme artefact GitHub (pour téléchargement)
       - name: Upload artifact
