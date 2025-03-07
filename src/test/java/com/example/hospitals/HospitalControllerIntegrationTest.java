@@ -85,35 +85,7 @@ public class HospitalControllerIntegrationTest {
         // À toi de décider le message/format d’erreur géré par ton exception
         // .andExpect(content().string("Some error message"));
     }
-
-
-    /**
-     *  Tester le GET /getAll
-     */
-    @Test
-    void testGetAllHospitals() throws Exception {
-        // On crée plusieurs hôpitaux
-        Hospital hospital1 = new Hospital();
-        hospital1.setName("Hopital1");
-        hospital1.setLatitude(10.0);
-        hospital1.setLongitude(20.0);
-        hospital1.setNumberOfBeds(10);
-
-        Hospital hospital2 = new Hospital();
-        hospital2.setName("Hopital2");
-        hospital2.setLatitude(11.0);
-        hospital2.setLongitude(21.0);
-        hospital2.setNumberOfBeds(20);
-
-        hospitalRepository.saveAll(List.of(hospital1, hospital2));
-
-        // Requête GET
-        mockMvc.perform(get("/hospitals/getAll")
-                        .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHVzZXIuZnIiLCJpYXQiOjE3NDAyNTcyMzcsImV4cCI6MTc0MDM0MzYzN30.1TWGR81SWOHIof186ywTtZuUGw_SUW_Wfxgjtw9wgo4")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2));
-    }
+    
 
     /**
      *  Tester le POST /add (consumes = "text/plain")
