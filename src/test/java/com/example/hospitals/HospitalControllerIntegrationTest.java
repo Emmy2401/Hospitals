@@ -85,7 +85,7 @@ public class HospitalControllerIntegrationTest {
         // À toi de décider le message/format d’erreur géré par ton exception
         // .andExpect(content().string("Some error message"));
     }
-    
+
 
     /**
      *  Tester le POST /add (consumes = "text/plain")
