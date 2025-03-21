@@ -1,0 +1,329 @@
+openapi: 3.1.0
+info:
+  title: MedHeadPoc Hospital
+  description: API for POC
+  version: 1.0.0
+servers:
+- url: http://localhost:8085
+  description: Local server
+- url: https://api.hospitals.example.com
+  description: Production server
+tags:
+- name: HOSPITALCONTROLLER
+  description: Controller API HOSPITAL
+paths:
+  /hospitals/login:
+    post:
+      tags:
+      - HOSPITALCONTROLLER
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /hospitals/distance:
+    post:
+      tags:
+      - HOSPITALCONTROLLER
+      summary: distance
+      description: appel calcul distance
+      operationId: calculateDistance
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DistanceRequestDTO"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: number
+                format: double
+  /hospitals/detail/{id}:
+    post:
+      tags:
+      - HOSPITALCONTROLLER
+      summary: detail
+      description: detail pour fiche hopital
+      operationId: detailHospital
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Hospital"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Hospital"
+  /hospitals/add:
+    post:
+      tags:
+      - HOSPITALCONTROLLER
+      summary: add
+      description: ajout  hopital
+      operationId: addHospital
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Hospital"
+  /hospitals/token:
+    get:
+      tags:
+      - HOSPITALCONTROLLER
+      operationId: getToken
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /hospitals/searchCriteria:
+    get:
+      tags:
+      - HOSPITALCONTROLLER
+      summary: searchCiretera
+      description: recherche par critère
+      operationId: getHospitalsWithDistance
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: minBeds
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: specialtyName
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: refLat
+        in: query
+        required: true
+        schema:
+          type: number
+          format: double
+      - name: refLng
+        in: query
+        required: true
+        schema:
+          type: number
+          format: double
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HospitalWithDistanceDTO"
+  /hospitals/name/{name}:
+    get:
+      tags:
+      - HOSPITALCONTROLLER
+      operationId: getHospitalByName
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Hospital"
+  /hospitals/id/{id}:
+    get:
+      tags:
+      - HOSPITALCONTROLLER
+      operationId: getHospitalById
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Hospital"
+  /hospitals/getAll:
+    get:
+      tags:
+      - HOSPITALCONTROLLER
+      summary: getAll
+      description: récupère la liste de tous les hopitaux
+      operationId: getAllHospitals
+      parameters:
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Hospital"
+components:
+  schemas:
+    DistanceRequestDTO:
+      type: object
+      properties:
+        latitudeFrom:
+          type: number
+          format: double
+        longitudeFrom:
+          type: number
+          format: double
+        latitudeTo:
+          type: number
+          format: double
+        longitudeTo:
+          type: number
+          format: double
+      required:
+      - latitudeFrom
+      - latitudeTo
+      - longitudeFrom
+      - longitudeTo
+    Hospital:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        numberOfBeds:
+          type: integer
+          format: int32
+        specialties:
+          type: array
+          items:
+            $ref: "#/components/schemas/Specialty"
+      required:
+      - latitude
+      - longitude
+      - numberOfBeds
+    Specialty:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        subSpecialties:
+          type: array
+          items:
+            $ref: "#/components/schemas/SubSpecialty"
+      required:
+      - name
+    SubSpecialty:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      required:
+      - name
+    HospitalWithDistanceDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        numberOfBeds:
+          type: integer
+          format: int32
+        specialties:
+          type: array
+          items:
+            $ref: "#/components/schemas/Specialty"
+        distance:
+          type: number
+          format: double
