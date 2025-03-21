@@ -6,6 +6,8 @@ import com.example.hospitals.Entity.Hospital;
 import com.example.hospitals.Service.HospitalService;
 import com.example.hospitals.Service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/hospitals")
+@Tag(name = "HOSPITALCONTROLLER", description = "Controller API HOSPITAL")
 public class HospitalController {
     @Autowired
     private HospitalService hospitalService;
@@ -56,6 +59,7 @@ public class HospitalController {
 
 
     @PostMapping(value = "/add", consumes = "text/plain", produces = "application/json")
+    @Operation(summary = "add", description = "ajout  hopital")
     public Hospital addHospital(@RequestHeader("Authorization") String token, @RequestBody String rawText) throws IOException {
         // Instanciation directe de ObjectMapper dans la méthode
         ObjectMapper objectMapper = new ObjectMapper();
@@ -66,6 +70,7 @@ public class HospitalController {
     }
 
     @PostMapping(value = "/detail/{id}")
+    @Operation(summary = "detail", description = "detail pour fiche hopital")
     public Hospital detailHospital(@RequestHeader("Authorization") String token, @PathVariable Long id, @RequestBody Hospital hospitalDetails) {
         return hospitalService.detailHospital(id, hospitalDetails);
     }
@@ -82,6 +87,7 @@ public class HospitalController {
     }
 
     @GetMapping("/searchCriteria")
+    @Operation(summary = "searchCiretera", description = "recherche par critère")
     public List<HospitalWithDistanceDTO> getHospitalsWithDistance(
             @RequestHeader("Authorization") String token,
             @RequestParam(required = false) Integer minBeds,
@@ -90,7 +96,8 @@ public class HospitalController {
             @RequestParam double refLng) {
         return hospitalService.findHospitalsWithDistance(minBeds, specialtyName, refLat, refLng);
     }
-    @PostMapping("/distance") //  Passe en POST
+    @PostMapping("/distance")
+    @Operation(summary = "distance", description = "appel calcul distance")//  Passe en POST
     public ResponseEntity<Double> calculateDistance(@RequestBody DistanceRequestDTO request) {
         double distance = hospitalService.getDistance(
                 request.getLatitudeFrom(),
@@ -102,6 +109,7 @@ public class HospitalController {
     }
 
     @GetMapping("/getAll")
+    @Operation(summary = "getAll", description = "récupère la liste de tous les hopitaux")
     public ResponseEntity<List<Hospital>> getAllHospitals( @RequestHeader("Authorization") String token) {
         List<Hospital> hospitals = hospitalService.getAllHospitals();
         return ResponseEntity.ok(hospitals);

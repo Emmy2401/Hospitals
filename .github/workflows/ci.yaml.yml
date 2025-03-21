@@ -3,14 +3,17 @@ name: CI/CD pour le Backend (Spring Boot)
 on:
   push:
     branches:
-      - "main"
+      - "dev"
   pull_request:
     branches:
-      - "main"
+      - "dev"
+    types: [closed]
 
 jobs:
   build-and-push:
     runs-on: ubuntu-22.04
+    # Exécuter ce job uniquement si la PR a été fusionnée
+    if: github.event.pull_request.merged == true || github.event_name == 'push'
 
     steps:
       # 1. Récupérer le code du dépôt
@@ -59,9 +62,9 @@ jobs:
       - name: Push Docker image (SHA)
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/hospitals-hospital:${{ github.sha }}
 
-      # 9. Retaguer l’image SHA en "latest" et la pousser, uniquement si on est sur la branche main
+      # 9. Retaguer l’image SHA en "latest" et la pousser, uniquement si on est sur la branche dev
       - name: Tag and push Docker image as latest
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/dev'
         run: |
           docker tag ${{ secrets.DOCKERHUB_USERNAME }}/hospitals-hospital:${{ github.sha }} \
                      ${{ secrets.DOCKERHUB_USERNAME }}/hospitals-hospital:latest
