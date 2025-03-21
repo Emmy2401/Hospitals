@@ -13,11 +13,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Map;
 
+/**
+ * Client Feign pour le service de calcul de distance.
+ * <p>
+ * Cette interface permet de communiquer avec le service de distance accessible à l'URL
+ * <code>http://localhost:8081/api/distance</code>. Elle offre une abstraction à OSRM
+ * </p>
+ * <p>
+ * La méthode {@link #calculateDistance(DistanceRequestDTO)} envoie une requête POST contenant un objet JSON
+ * conforme à {@code DistanceRequestDTO}. La réponse renvoyée est un {@link Double} représentant la distance
+ * calculée entre deux points géographiques.
+ * </p>
+ *
+ * @see DistanceRequestDTO
+ */
 @FeignClient(name = "distance", url = "http://localhost:8081/api/distance")
 public interface DistanceClient {
-    //implémentation local dans un premier temps mais grâce à l'interface on pourra rempalcer cela plus tard
-   // Double calculateDistance(double refLat, double refLng, double targetLat, double targetLng);
-    //@PostMapping("/distance")
+
     @RequestMapping(value = "",method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Headers("Content-Type: " + MediaType.APPLICATION_JSON_VALUE)
     Double calculateDistance(@RequestBody DistanceRequestDTO request);
